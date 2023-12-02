@@ -1,4 +1,4 @@
-file = open('input.txt', "r")
+file = open('../input.txt', "r")
 
 spelled_nums = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
 sum = 0

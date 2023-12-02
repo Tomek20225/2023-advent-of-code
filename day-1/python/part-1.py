@@ -1,4 +1,4 @@
-file = open('input.txt', "r")
+file = open('../input.txt', "r")
 sum = 0
 
 for line in file.readlines():
