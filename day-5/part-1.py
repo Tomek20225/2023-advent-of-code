@@ -34,17 +34,13 @@ for map_name, map in maps.items():
     
     for seed in seeds:
         prev_property_val = seed[prev_property]
-        found = False
+        seed[property] = prev_property_val
 
         for source_start, dest_start, length in map:
             if source_start <= prev_property_val and prev_property_val <= source_start + length:
                 dist = prev_property_val - source_start
                 seed[property] = dest_start + dist
-                found = True
                 break
-
-        if not found:
-            seed[property] = prev_property_val
 
     prev_property = property
 
