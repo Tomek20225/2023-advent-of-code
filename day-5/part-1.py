@@ -37,7 +37,7 @@ for map_name, map in maps.items():
         seed[property] = prev_property_val
 
         for source_start, dest_start, length in map:
-            if source_start <= prev_property_val and prev_property_val <= source_start + length:
+            if source_start <= prev_property_val and prev_property_val < source_start + length:
                 dist = prev_property_val - source_start
                 seed[property] = dest_start + dist
                 break
