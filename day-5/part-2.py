@@ -1,10 +1,25 @@
+# This is far from a efficient solution
+#
+# The algorithm should involve:
+# - finding minimal ranges
+# - skipping seeds which result in the same location number
+# - or creating negative ranges and checking those
+#
+# This code should be treated more as a multiprocessing experiment
+# For small numbers and ranges not creating the processes is much faster
+
 import sys
 import multiprocessing
 from functools import partial
+from typing import TypeAlias
 
-def process_range(range_tuple, maps):
+Map: TypeAlias = list[tuple[int, int, int]]
+Maps: TypeAlias = dict[str, Map]
+Range: TypeAlias = tuple[int, int]
+
+def process_range(range_tuple: Range, maps: Maps, properties: dict[str, str]) -> int:
     seed_range_start, seed_range_end = range_tuple
-    lowest_location = sys.maxsize
+    lowest_location: int = sys.maxsize
     seed = {
         "id": 0,
         "soil": 0,
@@ -22,7 +37,7 @@ def process_range(range_tuple, maps):
 
         for map_name in maps:
             map = maps[map_name]
-            property = map_name.split('-')[2]    
+            property = properties[map_name]
 
             prev_property_val = seed[prev_property]
             seed[property] = prev_property_val
@@ -42,44 +57,36 @@ def process_range(range_tuple, maps):
     return lowest_location
 
 
-def process_wrapper(range_tuple, maps):
-    return process_range(range_tuple, maps)
+def process_wrapper(range_tuple: Range, maps: Maps, properties: dict[str, str]):
+    return process_range(range_tuple, maps, properties)
 
 
-def main():
-    file = open('./input.txt')
-    lines = [line.strip() for line in file if line.strip()]
-    keywords = ['seed-to-soil', 'soil-to-fertilizer', 'fertilizer-to-water', 'water-to-light', 'light-to-temperature', 'temperature-to-humidity', 'humidity-to-location']
+def main() -> None:
+    FILE = open('./input.txt')
+    LINES = [line.strip() for line in FILE if line.strip()]
+    KEYWORDS = ['seed-to-soil', 'soil-to-fertilizer', 'fertilizer-to-water', 'water-to-light', 'light-to-temperature', 'temperature-to-humidity', 'humidity-to-location']
+    PROPERTIES_MAP = {keyword:keyword.split('-')[2] for keyword in KEYWORDS}
 
-    seed_descriptors = [int(num) for num in lines[0].split('seeds: ')[1].split(' ')]
-    seed_ranges = [(seed_descriptors[i], seed_descriptors[i] + seed_descriptors[i+1]) for i in range(0, len(seed_descriptors), 2)]
+    seed_descriptors: list[int] = [int(num) for num in LINES[0].split('seeds: ')[1].split(' ')]
+    seed_ranges: list[Range] = [(seed_descriptors[i], seed_descriptors[i] + seed_descriptors[i+1]) for i in range(0, len(seed_descriptors), 2)]
 
-    maps = {map:[] for map in keywords}
-
+    maps: Maps = {map:[] for map in KEYWORDS}
     keyword_idx = 0
 
-    for line in lines[1:]:
-        if keyword_idx < len(keywords) and keywords[keyword_idx] in line:
+    for line in LINES[1:]:
+        if keyword_idx < len(KEYWORDS) and KEYWORDS[keyword_idx] in line:
             keyword_idx += 1
         elif line != "":
             dest_start, source_start, length = line.split(' ')
-            maps[keywords[keyword_idx - 1]].append((int(source_start), int(dest_start), int(length)))
-
+            maps[KEYWORDS[keyword_idx - 1]].append((int(source_start), int(dest_start), int(length)))
 
     with multiprocessing.Pool() as pool:
-        partial_process_range = partial(process_wrapper, maps=maps)
+        partial_process_range = partial(process_wrapper, maps=maps, properties=PROPERTIES_MAP)
         results = pool.map(partial_process_range, seed_ranges)
 
     lowest_location = min(results)
     print(lowest_location)
 
+
 if __name__ == '__main__':
     main()
-
-# This is far from a efficient solution
-# The algorithm should involve:
-# - finding minimal ranges
-# - skipping seeds which result in the same location number
-# - or creating negative ranges and checking those
-# This code should be treated more as a multiprocessing experiment
-# For small numbers and ranges not creating the processes is much faster

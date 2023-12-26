@@ -1,8 +1,9 @@
-file = open('../input.txt', "r")
+FILE = open('../input.txt', "r")
+
 sum = 0
 
-for line in file.readlines():
-    nums = []
+for line in FILE.readlines():
+    nums: list[int] = []
 
     for char in line:
         if char.isnumeric():

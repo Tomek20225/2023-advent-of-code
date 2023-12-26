@@ -1,17 +1,17 @@
-file = open('../input.txt', "r")
+FILE = open('../input.txt', "r")
+SPELLED_NUMS = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
 
-spelled_nums = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
 sum = 0
 
-for line in file.readlines():
-    nums = []
+for line in FILE.readlines():
+    nums: list[int] = []
 
     for i, char in enumerate(line):
         if char.isnumeric():
             nums.append(int(char))
             continue
 
-        for num, spelled_num in enumerate(spelled_nums):
+        for num, spelled_num in enumerate(SPELLED_NUMS):
             if char == spelled_num[0]:
                 substr = line[i: i + len(spelled_num)]
                 if substr == spelled_num:

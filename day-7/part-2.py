@@ -1,5 +1,5 @@
 from functools import cmp_to_key
-from typing import TypeAlias
+from typing import TypeAlias, Literal
 
 LABELS = {'A':13, 'K':12, 'Q':11, 'T':10, '9':9, '8':8, '7':7, '6':6, '5':5, '4':4, '3':3, '2':2, 'J':1}
 TYPES = {'5OK':7, '4OK':6, 'FH':5, '3OK':4, '2P':3, '1P':2, 'H':1, 'O':0}
@@ -16,7 +16,7 @@ def categorize_hand(hand: str) -> str:
         else:
             counter[label] = 1
 
-    counter = dict(sorted(counter.items(), key=lambda x:x[1], reverse=True))
+    counter = dict(sorted(counter.items(), key=lambda x: x[1], reverse=True))
     labels = list(counter.keys())
     label_count = len(counter)
 
@@ -75,10 +75,9 @@ def categorize_hand(hand: str) -> str:
 
 def process_hand(str: str) -> Hand:
     hand, bid = str.strip().split(' ')
-    bid = int(bid)
-    return (hand, bid, categorize_hand(hand))
+    return (hand, int(bid), categorize_hand(hand))
 
-def compare_hands(hand_a: Hand, hand_b: Hand) -> int:
+def compare_hands(hand_a: Hand, hand_b: Hand) -> Literal[-1, 0, 1]:
     a = TYPES[hand_a[2]]
     b = TYPES[hand_b[2]]
 

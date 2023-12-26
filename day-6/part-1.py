@@ -1,16 +1,18 @@
 import functools
+from typing import TypeAlias
 
-file = open('./input.txt')
-lines = [line.strip() for line in file if line.strip()]
+FILE = open('./input.txt')
+LINES = [line.strip() for line in FILE if line.strip()]
 
-times = [int(num) for num in lines[0].replace('Time:', '').split(' ') if num]
-distances = [int(num) for num in lines[1].replace('Distance:', '').split(' ') if num]
-races = [(times[i], distances[i]) for i in range(0, len(times))]
+times = [int(num) for num in LINES[0].replace('Time:', '').split(' ') if num]
+distances = [int(num) for num in LINES[1].replace('Distance:', '').split(' ') if num]
+races: list[tuple[int, int]] = [(times[i], distances[i]) for i in range(0, len(times))]
 
-races_optimized = []
+races_optimized: list[list[int]] = []
+
 for race in races:
     time, win_dist = race
-    winning_hold_times = []
+    winning_hold_times: list[int] = []
 
     for hold_ms in range(1, time):
         speed = hold_ms

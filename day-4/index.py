@@ -1,24 +1,25 @@
 import functools 
 
 class Card:
-    def __init__(self, winning_nums, set_nums, instances = 1, matches = 0, score = 0):
+    def __init__(self, winning_nums: list[int], set_nums: list[int], instances: int = 1, matches: int = 0, score: int = 0) -> None:
         self.winning_nums = winning_nums
         self.set_nums = set_nums
         self.instances = instances
         self.matches = matches
         self.score = score
 
-file = open('./input.txt')
-cards = []
+FILE = open('./input.txt')
 
-for line in file:
+cards: list[Card] = []
+
+for line in FILE:
     all_nums = line.split(':')[1].strip()
     all_nums_split = all_nums.split('|')
     winning_nums = [int(num) for num in all_nums_split[0].strip().split(' ') if num]
     set_nums = [int(num) for num in all_nums_split[1].strip().split(' ') if num]
 
     matches = functools.reduce(lambda a, b: a + 1 if b in winning_nums else a, set_nums, 0)
-    score = pow(2, matches - 1) if matches > 0 else 0
+    score: int = pow(2, matches - 1) if matches > 0 else 0
 
     cards.append(Card(
         winning_nums,

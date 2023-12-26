@@ -1,12 +1,12 @@
-file = open('./input.txt')
+FILE = open('./input.txt')
+SYMBOLS = ['@', '#', '$', '%', '&', '*', '-', '=', '+', '/']
 
-symbols = ['@', '#', '$', '%', '&', '*', '-', '=', '+', '/']
-grid = [list(line.strip()) for line in file]
-locations = []
+grid = [list(line.strip()) for line in FILE if line.strip()]
+locations: list[tuple[int, int]] = []
 
 for y, row in enumerate(grid):
     for x, cell in enumerate(row):
-        if cell in symbols:
+        if cell in SYMBOLS:
             for sub_y in range(y - 1, y + 2):
                 for sub_x in range(x - 1, x + 2):
                     if grid[sub_y][sub_x].isdigit():
@@ -14,7 +14,7 @@ for y, row in enumerate(grid):
                             continue
                         locations.append((sub_y, sub_x))
 
-numbers = []
+numbers: list[int] = []
 
 for location in locations:
     loc_y, loc_x = location
@@ -41,4 +41,5 @@ for location in locations:
     if len(num_str) > 0:
         numbers.append(int(num_str))
 
-print(sum(numbers))
+sum = sum(numbers)
+print(sum)

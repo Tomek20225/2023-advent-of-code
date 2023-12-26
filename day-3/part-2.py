@@ -1,13 +1,16 @@
-file = open('./input.txt')
+from typing import TypeAlias
 
-symbol = '*'
-grid = [list(line.strip()) for line in file]
-locations = []
+FILE = open('./input.txt')
+SYMBOL = '*'
+Location: TypeAlias = tuple[int, int]
+
+grid = [list(line.strip()) for line in FILE if line.strip()]
+locations: list[tuple[Location, Location]] = []
 
 for y, row in enumerate(grid):
     for x, cell in enumerate(row):
-        if cell == symbol:
-            temp_locations = []
+        if cell == SYMBOL:
+            temp_locations: list[Location] = []
             
             for sub_y in range(y - 1, y + 2):
                 for sub_x in range(x - 1, x + 2):
@@ -20,7 +23,7 @@ for y, row in enumerate(grid):
                 locations.append((temp_locations[0], temp_locations[1]))
 
 
-def get_num(location):
+def get_num(location: Location) -> int:
     loc_y, loc_x = location
     num_str = ""
 
@@ -42,13 +45,10 @@ def get_num(location):
         else:
             break
     
-    if len(num_str) > 0:
-        return int(num_str)
-    else:
-        return False
+    return int(num_str)
 
 
-numbers = []
+numbers: list[int] = []
 
 for location_pair in locations:
     loc_1, loc_2 = location_pair
@@ -57,4 +57,5 @@ for location_pair in locations:
     ratio = num_1 * num_2
     numbers.append(ratio)
 
-print(sum(numbers))
+sum = sum(numbers)
+print(sum)

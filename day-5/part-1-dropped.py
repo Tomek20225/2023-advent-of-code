@@ -1,36 +1,40 @@
+# Dropped because this solution works well only with small numbers
+# since it stores every possible mapping in memory
+# The task input contains only large ints
+
 import sys
 
-file = open('./input.txt')
-lines = [line.strip() for line in file if line.strip()]
-keywords = ['seed-to-soil', 'soil-to-fertilizer', 'fertilizer-to-water', 'water-to-light', 'light-to-temperature', 'temperature-to-humidity', 'humidity-to-location']
+class Seed:
+    def __init__(self, id: int, soil: int = 0, fertilizer: int = 0, water: int = 0, light: int = 0, temperature: int = 0, humidity: int = 0, location: int = 0) -> None:
+        self.id = id
+        self.soil = soil
+        self.fertilizer = fertilizer
+        self.water = water
+        self.light = light
+        self.temperature = temperature
+        self.humidity = humidity
+        self.location = location
 
-seeds = []
-for num in lines[0].split('seeds: ')[1].split(' '):
-    seeds.append({
-        "id": int(num),
-        "soil": 0,
-        "fertilizer": 0,
-        "water": 0,
-        "light": 0,
-        "temperature": 0,
-        "humidity": 0,
-        "location": 0
-    })
+FILE = open('./input.txt')
+LINES = [line.strip() for line in FILE if line.strip()]
+KEYWORDS = ['seed-to-soil', 'soil-to-fertilizer', 'fertilizer-to-water', 'water-to-light', 'light-to-temperature', 'temperature-to-humidity', 'humidity-to-location']
+PROPERTIES_MAP = {keyword:keyword.split('-')[2] for keyword in KEYWORDS}
 
-maps = {map:{} for map in keywords}
+seeds = [Seed(id = int(num)) for num in LINES[0].split('seeds: ')[1].split(' ')]
+maps: dict[str, list[tuple[int, int, int]]] = {map:{} for map in KEYWORDS}
 keyword_idx = 0
 
-for line in lines[1:]:
-    if keyword_idx < len(keywords) and keywords[keyword_idx] in line:
+for line in LINES[1:]:
+    if keyword_idx < len(KEYWORDS) and KEYWORDS[keyword_idx] in line:
         keyword_idx += 1
     elif line != "":
         dest_start, source_start, length = line.split(' ')
         for i in range(0, int(length)):
-            maps[keywords[keyword_idx - 1]][int(source_start) + i] = int(dest_start) + i
+            maps[KEYWORDS[keyword_idx - 1]][int(source_start) + i] = int(dest_start) + i
 
 prev_property = "id"
-for map in keywords:
-    property = map.split('-')[2]
+for map in KEYWORDS:
+    property = PROPERTIES_MAP[map]
     
     for seed in seeds:
         prev_property_val = seed[prev_property]
@@ -42,11 +46,9 @@ for map in keywords:
     prev_property = property
 
 # Solution
-lowest_location = sys.maxsize
+lowest_location: int = sys.maxsize
 for seed in seeds:
     if seed['location'] < lowest_location:
         lowest_location = seed['location']
-print(lowest_location)
 
-# Dropped because this solution works well only with small numbers
-# The task input contained only large ints
+print(lowest_location)

@@ -1,23 +1,24 @@
 class Set:
-    def __init__(self, red, green, blue):
+    def __init__(self, red: int, green: int, blue: int) -> None:
         self.red = red
         self.green = green
         self.blue = blue
 
 class Game:
-    def __init__(self, id, sets):
+    def __init__(self, id: int, sets: list[Set]) -> None:
         self.id = id
         self.sets = sets
 
-games = []
-file = open('input.txt', 'r')
+FILE = open('input.txt', 'r')
 
-for line in file.readlines():
+games: list[Game] = []
+
+for line in FILE.readlines():
     id_str, sets_str = line.split(':')
     _, id = id_str.split()
 
     sets_split = sets_str.split(";")
-    sets = []
+    sets: list[Set] = []
 
     for set_str in sets_split:
         parts = [s.strip().split() for s in set_str.split(',')]
@@ -25,9 +26,8 @@ for line in file.readlines():
         g = 0
         b = 0
 
-        for part in parts:
-            num = int(part[0])
-            color = part[1]
+        for num, color in parts:
+            num = int(num)
 
             if "red" == color:
                 r = num
