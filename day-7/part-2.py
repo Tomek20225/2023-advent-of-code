@@ -8,7 +8,7 @@ Hand: TypeAlias = tuple[str, int, str]
 FILE = open('./input.txt')
 
 def categorize_hand(hand: str) -> str:
-    counter = {}
+    counter: dict[str, int] = {}
 
     for label in hand:
         if label in counter:
@@ -22,54 +22,59 @@ def categorize_hand(hand: str) -> str:
 
     type = TYPES["O"]
 
-    if label_count == 1:
-        type = '5OK'
-    elif label_count == 2:
-        if counter[labels[0]] == 4 or counter[labels[1]] == 4:
-            type = '4OK'
-        elif counter[labels[0]] == 3 and counter[labels[1]] == 2:
-            type = 'FH'
-    elif label_count == 3:
-        if counter[labels[0]] == 3 and counter[labels[1]] == 1:
-            type = '3OK'
-        elif counter[labels[0]] == 2 and counter[labels[1]] == 2:
-            type = '2P'
-    elif label_count == 4:
-        if counter[labels[0]] == 2 and counter[labels[1]] == 1 and counter[labels[2]] == 1:
-            type = '1P'
-    elif label_count == 5:
-        type = 'H'
+    match label_count:
+        case 1:
+            type = '5OK'
+        case 2:
+            if counter[labels[0]] == 4 or counter[labels[1]] == 4:
+                type = '4OK'
+            elif counter[labels[0]] == 3 and counter[labels[1]] == 2:
+                type = 'FH'
+        case 3:
+            if counter[labels[0]] == 3 and counter[labels[1]] == 1:
+                type = '3OK'
+            elif counter[labels[0]] == 2 and counter[labels[1]] == 2:
+                type = '2P'
+        case 4:
+            if counter[labels[0]] == 2 and counter[labels[1]] == 1 and counter[labels[2]] == 1:
+                type = '1P'
+        case 5:
+            type = 'H'
 
     if 'J' not in labels:
         return type
 
     joker_count: int = counter['J']
 
-    if joker_count >= 4:
-        return '5OK'
-    elif joker_count == 3:
-        if type == 'FH':
+    match joker_count:
+        case count if count >= 4:
             return '5OK'
-        elif type == '3OK':
-            return '4OK'
-    elif joker_count == 2:
-        if type == 'FH':
-            return '5OK'
-        elif type == '2P':
-            return '4OK'
-        elif type == '1P':
-            return '3OK'
-    elif joker_count == 1:
-        if type == '4OK':
-            return '5OK'
-        elif type == '3OK':
-            return '4OK'
-        elif type == '2P':
-            return 'FH'
-        elif type == '1P':
-            return '3OK'
-        elif type == 'H':
-            return '1P'
+        case 3:
+            match type:
+                case 'FH':
+                    return '5OK'
+                case '3OK':
+                    return '4OK'
+        case 2:
+            match type:
+                case 'FH':
+                    return '5OK'
+                case '2P':
+                    return '4OK'
+                case '1P':
+                    return '3OK'
+        case 1:
+            match type:
+                case '4OK':
+                    return '5OK'
+                case '3OK':
+                    return '4OK'
+                case '2P':
+                    return 'FH'
+                case '1P':
+                    return '3OK'
+                case 'H':
+                    return '1P'
 
     return type
 

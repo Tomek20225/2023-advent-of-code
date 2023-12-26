@@ -8,7 +8,7 @@ Hand: TypeAlias = tuple[str, int, str]
 FILE = open('./input.txt')
 
 def categorize_hand(hand: str) -> str:
-    counter = {}
+    counter: dict[str, int] = {}
 
     for label in hand:
         if label in counter:
@@ -20,23 +20,24 @@ def categorize_hand(hand: str) -> str:
     labels = list(counter.keys())
     label_count = len(counter)
 
-    if label_count == 1:
-        return '5OK'
-    elif label_count == 2:
-        if counter[labels[0]] == 4 or counter[labels[1]] == 4:
-            return '4OK'
-        elif counter[labels[0]] == 3 and counter[labels[1]] == 2:
-            return 'FH'
-    elif label_count == 3:
-        if counter[labels[0]] == 3 and counter[labels[1]] == 1:
-            return '3OK'
-        elif counter[labels[0]] == 2 and counter[labels[1]] == 2:
-            return '2P'
-    elif label_count == 4:
-        if counter[labels[0]] == 2 and counter[labels[1]] == 1 and counter[labels[2]] == 1:
-            return '1P'
-    elif label_count == 5:
-        return 'H'
+    match label_count:
+        case 1:
+            return '5OK'
+        case 2:
+            if counter[labels[0]] == 4 or counter[labels[1]] == 4:
+                return '4OK'
+            elif counter[labels[0]] == 3 and counter[labels[1]] == 2:
+                return 'FH'
+        case 3:
+            if counter[labels[0]] == 3 and counter[labels[1]] == 1:
+                return '3OK'
+            elif counter[labels[0]] == 2 and counter[labels[1]] == 2:
+                return '2P'
+        case 4:
+            if counter[labels[0]] == 2 and counter[labels[1]] == 1 and counter[labels[2]] == 1:
+                return '1P'
+        case 5:
+            return 'H'
 
     return TYPES[-1]
 
