@@ -10,10 +10,11 @@ import (
 
 func main() {
 	readFile, err := os.Open("../input.txt")
-
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
+	defer readFile.Close()
 
 	fileScanner := bufio.NewScanner(readFile)
 	fileScanner.Split(bufio.ScanLines)
@@ -24,25 +25,24 @@ func main() {
 		line := fileScanner.Text()
 		nums := make([]int, 0)
 
-		for i := 0; i < len(line); i++ {
-			char := line[i]
+		for _, char := range line {
 			if unicode.IsDigit(rune(char)) {
-				int, err := strconv.Atoi(string(char))
+				digit, err := strconv.Atoi(string(char))
 				if err != nil {
+					fmt.Println(err)
 					return
 				}
-				nums = append(nums, int)
+				nums = append(nums, digit)
 			}
 		}
 
-		first := nums[0]
-		last := nums[len(nums) - 1]
-		val := (first * 10) + last
-
-		sum += val
+		if len(nums) >= 1 {
+			first := nums[0]
+			last := nums[len(nums) - 1]
+			val := (first * 10) + last
+			sum += val
+		}
 	}
 
 	fmt.Println(sum)
-
-	readFile.Close()
 }
