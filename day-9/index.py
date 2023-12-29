@@ -14,12 +14,12 @@ def get_all_differences(nums: list[int]) -> list[list[int]]:
     return get_all_differences(differences) + [nums]
 
 def predict_next_value(nums: list[int]) -> int:
-    sequences: list[list[int]] = get_all_differences(nums)
+    sequences = get_all_differences(nums)
     next_increment = functools.reduce(lambda a, b: a + b[-1], sequences, 0)
     return next_increment
 
 def predict_prev_value(nums: list[int]) -> int:
-    sequences: list[list[int]] = get_all_differences(nums)
+    sequences = get_all_differences(nums)
     prev_increment = functools.reduce(lambda a, b: b[0] - a, sequences, 0)
     return prev_increment
 
