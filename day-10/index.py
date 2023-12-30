@@ -6,8 +6,11 @@ Coords: TypeAlias = tuple[bool, bool, bool, bool]
 
 FILE = open('./index.txt')
 LINES = [line.strip() for line in FILE if line.strip()]
+
 GRID = [[col for col in row] for row in LINES]
 GRID_VISITED = [[False for _ in row] for row in LINES]
+
+pipe_locations: list[Location] = []
 CONNECTION_MAP: dict[str, Coords] = {
     # TYPE: (CAN_NORTH, CAN_EAST, CAN_SOUTH, CAN_WEST)
     '|': (True, False, True, False),
@@ -19,6 +22,7 @@ CONNECTION_MAP: dict[str, Coords] = {
     '.': (False, False, False, False),
     'S': (True, True, True, True),
 }
+UNCROSSABLE_PIPES = ['L', '-', 'J']
 
 def get_cell(loc: Location) -> str:
     y, x = loc
@@ -27,6 +31,8 @@ def get_cell(loc: Location) -> str:
 def mark_visited(loc: Location) -> None:
     y, x = loc
     GRID_VISITED[y][x] = True
+    if loc not in pipe_locations:
+        pipe_locations.append(loc)
 
 def is_visited(loc: Location) -> bool:
     y, x = loc
@@ -139,34 +145,25 @@ while True:
     distance += 1
 
 distance = ceil(distance / 2)
-print(distance)
+print('Part 1:', distance)
 
 
 # Part 2
-# TODO: Implement a proper crawling algorithm. The code below doesn't work correctly
-for row in GRID_VISITED:
-    print(row)
-
-y = 0
-while y < len(GRID_VISITED):
+# TODO: This works on examples, not on valid input
+tiles = 0
+for y in range(0, len(GRID_VISITED)):
     row = GRID_VISITED[y]
-    x = 0
-    while x < len(row):
+    for x in range(0, len(row)):
         loc = (y, x)
-        cell = is_visited(loc)
-        if cell == False:
-            mark_visited(loc)
-            x += 1
-        else:
-            try:
-                x = row.index(True, x + 1, len(row))
-            except:
-                x += 1
-                continue
-    y += 1
+        if is_visited(loc):
+            continue
+        intersections = 0
+        for x_i in range(x + 1, len(row)):
+            next_loc = (y, x_i)
+            next_cell_val = get_cell(next_loc)
+            if next_loc in pipe_locations and next_cell_val not in UNCROSSABLE_PIPES:
+                intersections += 1
+        if intersections % 2 != 0:
+            tiles += 1
 
-tiles = sum([len(row) - sum([int(cell) for cell in row]) for row in GRID_VISITED])
-print('STOP')
-for row in GRID_VISITED:
-    print(row)
-print(tiles)
+print('Part 2:', tiles)
