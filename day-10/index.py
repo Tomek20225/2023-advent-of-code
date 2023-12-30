@@ -4,7 +4,7 @@ from math import ceil
 Location: TypeAlias = tuple[int, int] # (y, x)
 Coords: TypeAlias = tuple[bool, bool, bool, bool]
 
-FILE = open('./index.txt')
+FILE = open('./input.txt')
 LINES = [line.strip() for line in FILE if line.strip()]
 
 GRID = [[col for col in row] for row in LINES]
@@ -22,7 +22,8 @@ CONNECTION_MAP: dict[str, Coords] = {
     '.': (False, False, False, False),
     'S': (True, True, True, True),
 }
-UNCROSSABLE_PIPES = ['L', '-', 'J']
+UNCROSSABLE_PIPES = ['L', '-', 'J', 'S']
+
 
 def get_cell(loc: Location) -> str:
     y, x = loc
@@ -115,6 +116,27 @@ def move(loc_a: Location, loc_b: Location) -> Location | Literal[False]:
     mark_visited(next_loc)
     return next_loc
 
+def match_pipe_by_moves(start_loc: Location, moves: list[Location]) -> str:
+    y, x = start_loc
+    coords = [False, False, False, False]
+
+    for move_y, move_x in moves:
+        if move_x > x:
+            coords[1] = True
+        elif move_x < x:
+            coords[3] = True
+        elif move_y > y:
+            coords[2] = True
+        elif move_y < y:
+            coords[0] = True
+
+    coords = tuple(coords)
+    for key, val in CONNECTION_MAP.items():
+        if val == coords:
+            return key
+    
+    return '.'
+
 
 # Part 1
 start_location: Location
@@ -124,6 +146,7 @@ for y, row in enumerate(GRID):
             start_location = (y, x)
             break
 
+starting_moves = get_possible_moves(start_location)
 current_cell_loc = start_location
 distance = 0
 
@@ -149,8 +172,10 @@ print('Part 1:', distance)
 
 
 # Part 2
-# TODO: This works on examples, not on valid input
+start_pipe = match_pipe_by_moves(start_location, starting_moves)
+GRID[start_location[0]][start_location[1]] = start_pipe
 tiles = 0
+
 for y in range(0, len(GRID_VISITED)):
     row = GRID_VISITED[y]
     for x in range(0, len(row)):
